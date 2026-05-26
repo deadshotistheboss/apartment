@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Blueprint of Us</title>
+    <!-- Romantic & Clean Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ROMANTIC MINIMALIST DESIGN --- */
+        :root {
+            --bg-color: #FCFAFA;
+            --text-main: #3A3331;
+            --text-muted: #8B7E7B;
+            --accent-color: #CBA5A3; /* soft dusty rose */
+            --accent-light: #F4E8E7;
+            --panel-bg: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 60px 20px 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            margin-top: 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            max-width: 600px;
+        }
+
+        /* --- THE SEAMLESS MAP CONTAINER --- */
+        #map-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(203, 165, 163, 0.15);
+            overflow: hidden;
+            border: 1px solid rgba(203, 165, 163, 0.2);
+            background-color: #fff;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        
+        #map-container:hover {
+            box-shadow: 0 20px 50px rgba(203, 165, 163, 0.22);
+        }
+
+        /* Base Blueprint Image */
+        .base-image {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Colored Room Layers */
+        .color-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+        .color-layer.unlocked {
+            opacity: 1;
+        }
+
+        /* Invisible Interactive Click Areas */
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            z-index: 10;
+            border: 1px solid transparent;
+            background-color: transparent;
+            transition: all 0.4s ease;
+            border-radius: 12px;
+        }
+        
+        .hotspot.unlocked {
+            cursor: pointer;
+        }
+
+        .hotspot:hover {
+            border: 1px solid var(--accent-color);
+            background-color: rgba(203, 165, 163, 0.12);
+            box-shadow: inset 0 0 20px rgba(203, 165, 163, 0.08);
+        }
+
+        /* --- MEMORY DISPLAY PANEL --- */
+        #memory-panel {
+            width: 100%;
+            max-width: 720px; /* Slightly narrower to emphasize text */
+            margin-top: 60px;
+            background-color: var(--panel-bg);
+            padding: 45px 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            text-align: center;
+            position: relative;
+        }
+        
+        #memory-panel::before {
+            content: "✦";
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-color);
+            padding: 0 15px;
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        #memory-panel.active {
+            display: block;
+        }
+        
+        #memory-panel.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .memory-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .memory-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            color: var(--text-main);
+            line-height: 2.1;
+            font-size: 1.05rem;
+        }
+        
+        /* Subtle fade-in animation for initial load */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        body > * {
+            animation: fadeIn 1.2s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>THE BLUEPRINT OF US</h1>
+    <div class="subtitle">Our future space. Click inside any room to illuminate our future memories.</div>
+
+    <div id="map-container">
+        <img src="blueprint.png" class="base-image" id="blueprint-img" alt="Base Blueprint">
+        
+        </div>
+
+    <div id="memory-panel">
+        <div class="memory-title" id="panel-title"></div>
+        <div class="memory-text" id="panel-text"></div>
+    </div>
+
+    <script>
+        // Your exact coordinates and stories for all 7 spaces
+        const rooms = {
+            "kitchen": {
+                name: "The Kitchen Island",
+                coords: [425, 361, 900, 1070],
+                text: "Where I stand cooking up our favorite food (Maggi?), and you sit up on the kitchen island talking about anything and everything so I don't get bored for even a single second."
+            },
+            "dancing": {
+                name: "The Dancing Area & Window",
+                coords: [860, 363, 1370, 1066],
+                text: "The dedicated floor where we'll be spending most of our time slow dancing, mostly consisting of me tripping over my feet and you patiently teaching me how to move. It's also right by the large window where we'll spend late nights sitting on the floor in each other's arms, completely quiet, watching the lights over the bridge."
+            },
+            "bedroom": {
+                name: "The Bedroom Sanctuary",
+                coords: [1370, 357, 1897, 969],
+                text: "Our ultimate comfort zone. No alarms, heavy blankets, holding each other tight, and sleeping for a full 13 hours straight."
+            },
+            "bathroom": {
+                name: "The Bathroom & Laundry",
+                coords: [1370, 1165, 1897, 1471],
+                text: "Where we will inevitably have our playful fights over how you take a full hour to get ready while I wait outside. It's also where the laundry machines live, meaning it's the spot where I will be taking care of the laundry, completely content, while you treat me to a live singing concert."
+            },
+            "living": {
+                name: "The Living Area",
+                coords: [897, 1047, 1374, 1465],
+                text: "The cozy, inviting social hub of the apartment where we'll host movie nights and double dates, bringing all our favorite friends together into our space."
+            },
+            "entry": {
+                name: "The Entry Hall & Dining",
+                coords: [431, 1067, 897, 1463],
+                text: "The dining area that we will probably only ever use for formal occasions (where I'll wear my white shirt and you your nightsuit), and the entry door where we will always meet each other with a huge hug whenever the other comes home."
+            },
+            "wardrobe": {
+                name: "The Wardrobe",
+                coords: [1372, 963, 1895, 1174],
+                text: "Where you will scout and pick out exactly what both of us are wearing every day, because I have absolutely zero sense of fashion and make no decisions about my clothes."
+            }
+        };
+
+        const container = document.getElementById('map-container');
+        const panel = document.getElementById('memory-panel');
+        const panelTitle = document.getElementById('panel-title');
+        const panelText = document.getElementById('panel-text');
+        const baseImg = document.getElementById('blueprint-img');
+
+        // --- THE ENGINE ---
+        function buildInteractiveMap() {
+            // Get the absolute intrinsic pixel dimensions of the uploaded image
+            const W = baseImg.naturalWidth;
+            const H = baseImg.naturalHeight;
+
+            Object.keys(rooms).forEach(key => {
+                const room = rooms[key];
+                const [left, top, right, bottom] = room.coords;
+
+                // Math to convert your raw pixels into perfectly accurate percentages
+                const topPct = (top / H) * 100;
+                const rightPct = ((W - right) / W) * 100;
+                const bottomPct = ((H - bottom) / H) * 100;
+                const leftPct = (left / W) * 100;
+
+                const widthPct = ((right - left) / W) * 100;
+                const heightPct = ((bottom - top) / H) * 100;
+
+                // 1. Create the Color Mask Layer
+                const colorLayer = document.createElement('div');
+                colorLayer.className = 'color-layer';
+                colorLayer.id = `layer-${key}`;
+                colorLayer.style.clipPath = `inset(${topPct}% ${rightPct}% ${bottomPct}% ${leftPct}%)`;
+                colorLayer.innerHTML = `<img src="colorPrint.png" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" alt="Color Layer">`;
+                container.appendChild(colorLayer);
+
+                // 2. Create the Clickable Hotspot Overlay
+                const hotspot = document.createElement('div');
+                hotspot.className = 'hotspot';
+                hotspot.title = `Unlock ${room.name}`;
+                hotspot.style.left = `${leftPct}%`;
+                hotspot.style.top = `${topPct}%`;
+                hotspot.style.width = `${widthPct}%`;
+                hotspot.style.height = `${heightPct}%`;
+                
+                // 3. Add the Seamless Click Interaction
+                hotspot.addEventListener('click', () => {
+                    colorLayer.classList.add('unlocked');
+                    hotspot.classList.add('unlocked');
+
+                    panelTitle.innerText = room.name;
+                    panelText.innerHTML = room.text;
+                    
+                    panel.classList.remove('show');
+                    
+                    if (!panel.classList.contains('active')) {
+                        panel.classList.add('active');
+                    }
+                    
+                    setTimeout(() => {
+                        panel.classList.add('show');
+                        // Elegant scroll that gently centers the memory panel
+                        const panelPosition = panel.getBoundingClientRect().top;
+                        const offsetPosition = panelPosition + window.pageYOffset - (window.innerHeight / 2) + (panel.offsetHeight / 2);
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }, 50);
+                });
+
+                container.appendChild(hotspot);
+            });
+        }
+
+        // Wait until the image actually loads so it can read the correct dimensions
+        if (baseImg.complete) {
+            buildInteractiveMap();
+        } else {
+            baseImg.onload = buildInteractiveMap;
+        }
+    </script>
+</body>
+</html>
